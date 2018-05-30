@@ -1,0 +1,40 @@
+version: "3.4"
+
+services:
+
+    webserver_psalmonis:
+        build: ./apache
+        container_name: psalmonisdb_webserver
+        ports:
+            - "80:80"
+        restart: always
+        volumes:
+            - ./front_files:/var/www/html
+        environment:
+            - MYSQL_DATABASE=${DB_NAME}
+            - MYSQL_USER=${DB_USER}
+            - MYSQL_PASSWORD=${DB_PASS}
+        networks:
+        depends_on:
+            - db_psalmonis
+        networks:
+            - webserver
+            - db
+
+    db_psalmonis:
+        build: ./db_config
+        container_name: db
+        restart: always
+        volumes:
+            - ./db_files:/var/lib/mysql
+        environment:
+            - MYSQL_RANDOM_ROOT_PASSWORD=YES
+            - MYSQL_DATABASE=${DB_NAME}
+            - MYSQL_USER=${DB_USER}
+            - MYSQL_PASSWORD=${DB_PASS}
+        networks:
+            - db
+
+networks:
+    db:
+    webserver:
